@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Event Study</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Oxanium' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>     
+    <link type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/regression/1.4.0/regression.min.js" integrity="sha256-shrQYVCltYlBHywosRi5na09S7Qru6QCOCV1c5EgJ6c=" crossorigin="anonymous"></script>
+<script type="text/javascript">    
+
+// RANDOM FORMULA
+    
+function normal(options) { //https://github.com/mock-end/random-normal/blob/master/index.js
+
+  options = Object.assign({ mean: 0, dev: 1, pool: [] }, options);
+
+  // If a pool has been passed, then we are returning an item from that pool,
+  // using the normal distribution settings that were passed in
+  if (Array.isArray(options.pool) && options.pool.length > 0) {
+    return normalPool(options);
+  }
+
+  // The Marsaglia Polar method
+  var s;
+  var u;
+  var v;
+  var norm;
+  var mean = options.mean;
+  var dev  = options.dev;
+
+  do {
+    // U and V are from the uniform distribution on (-1, 1)
+    u = Math.random() * 2 - 1;
+    v = Math.random() * 2 - 1;
+
+    s = u * u + v * v;
+  } while (s >= 1);
+
+  // Compute the standard normal variate
+  norm = u * Math.sqrt(-2 * Math.log(s) / s);
+
+  // Shape and scale
+  return dev * norm + mean;
+}
+ 
+//DEFINE VARIABLES    
+    
+var rjmean = function(rjres){   
+     var sum = 0;
+    for (var i=0; i<rjres.length; i++){
+      sum = sum + rjres[i]
+     }
+     return sum/rjres.length;
+    }
+
+var rmres = 0;
+var rjres = 0;
+var rmres_values = [];
+var rjres_values = [];
+var pjres_values = [];
+var pjres2_values = [];
+var pjres3_values = [];
+var exp_r_values = [];
+var abn_r2_values = [];
+var regdata_list = [];
+var table = document.createElement("table");
+    
+
+
+    
+    
+var gradient = 0 ;   //betaj
+var yIntercept = 0 ; //alphaj 
+    
+var d3 = Plotly.d3;
+    
+// FIRST FUNCTION SHOWS TABLE AND GRAPH
+    
+function display(){
+  var prev_pj = 1;
+  
+  var header1 = document.createElement("th");
+  var row = table.insertRow();   
+  header1.innerHTML = ["Market Returns"];
+  row.appendChild(header1);
+  var header2 = document.createElement("th");
+  header2.innerHTML = ["Asset Returns"];
+  row.appendChild(header2);
+  var header3 = document.createElement("th");
+  header3.innerHTML = ["Asset Price"];   
+  row.appendChild(header3);    
+    
+  for(i=0; i<=100; i++){
+      
+    var rf = document.getElementById("data").elements["rf"].value;
+    var mrp = document.getElementById("data").elements["mrp"].value;
+    var sdm = document.getElementById("data").elements["sdm"].value;
+    var betaj = document.getElementById("data").elements["bj"].value; 
+    var sdj = document.getElementById("data").elements["sdj"].value;    
+    var norminv1 = normal({mean: 0, dev: parseFloat(sdm)});
+    var norminv2 = normal({mean: 0, dev: parseFloat(sdj)});
+    //debugger; 
+    
+    rmres = parseFloat(rf) + parseFloat(mrp) + norminv1;
+      
+    var diff = rmres - parseFloat(rf);
+    rjres = parseFloat(rf) + (parseFloat(betaj)*diff) + norminv2;
+      
+    var pjres = prev_pj*(1+rjres);  
+    prev_pj = pjres;
+      
+    rmres_values.push(rmres);
+    rjres_values.push(rjres);
+    pjres_values.push(pjres);   
+    
+    var row = table.insertRow();
+     
+    var cell = row.insertCell();        
+    cell.innerHTML = rmres;
+    cell = row.insertCell(1);    
+    cell.innerHTML = rjres;
+    cell = row.insertCell(2);    
+    cell.innerHTML = pjres    
+    document.body.appendChild(table);
+ }
+    
+for (i=0; i<rmres_values.length; i++){
+  var regdata = [rmres_values[i],rjres_values[i]];
+  regdata_list.push(regdata);
+}
+    
+console.log(regdata_list);    
+    
+var result = regression('linear', regdata_list);
+console.log(result);
+gradient = result.equation[0];   //betaj
+yIntercept = result.equation[1]; //alphaj  
+
+console.log(rjmean(rjres_values));    
+console.log(gradient);
+console.log(yIntercept); 
+    
+var trace1 = {
+  x: d3.range(-3,3,6/pjres_values.length), 
+  y: pjres_values,
+  type: 'scatter',
+  mode:'lines',
+  name:'CAPM'
+};
+var data = [trace1];
+Plotly.newPlot('myDiv', data);
+}
+ 
+// SECOND FUNCTION SHOWS MARTINGALE HYPOTHESIS (ADD COLUMN AND LINE)  
+    
+
+    
+function martingale(){
+ var prev_pj2 = 1;     
+ 
+ var header4 = document.getElementsByTagName("table")[1].querySelectorAll("tr")[0].insertCell(); 
+ header4.innerHTML = ["Martingale Hypothesis"];
+
+ for(i=0; i<=100; i++){
+ var abn_r = rjres_values[i]-rjmean(rjres_values);
+ var pjres2 = prev_pj2*(1+abn_r);
+    prev_pj2 = pjres2;   
+    var cell = document.getElementsByTagName("table")[1].querySelectorAll("tr")[i+1].insertCell();
+    cell.innerHTML = pjres2;    
+    pjres2_values.push(pjres2);    
+  }  
+  Plotly.addTraces('myDiv', {x:d3.range(-3,3,6/pjres2_values.length),y: pjres2_values,type: 'scatter',mode:'lines',name:'Martingale Hypothesis'});
+ }
+    
+// THIRD FUNCTION SHOWS MARKET MODEL (ADD COLUMN AND LINE)
+    
+function marketmodel(){
+var prev_pj3 = 1;
+    
+ var header4 = document.getElementsByTagName("table")[1].querySelectorAll("tr")[0].insertCell(); 
+ header4.innerHTML = ["Market Model"];
+    
+ for(i=0; i<=100; i++){
+  var exp_r = yIntercept+(gradient*rmres_values[i]);
+  exp_r_values.push(exp_r);}
+ for(i=0; i<=100; i++){
+  var abn_r2 = rjres_values[i]-exp_r_values[i];
+  abn_r2_values.push(abn_r2);}
+ for(i=0; i<=100; i++){ 
+ var pjres3 = prev_pj3*(1+abn_r2_values[i]);
+    prev_pj3 = pjres3;   
+    var cell = document.getElementsByTagName("table")[1].querySelectorAll("tr")[i+1].insertCell();
+    cell.innerHTML = pjres3;    
+    pjres3_values.push(pjres3);    
+  } 
+  Plotly.addTraces('myDiv', {x:d3.range(-3,3,6/pjres3_values.length),y: pjres3_values,type: 'scatter',mode:'lines',name:'Market Model'});    
+}    
+    
+    
+</script>        
+    </head>
+<style>   
+    
+body {  
+  font-family: sans-serif;
+  letter-spacing: 2px;
+  background: linear-gradient(to bottom, #000839 30%, #00a8cc) repeat center;   
+  height: 100%;
+  width: 99%;
+  position: relative;  
+}
+    
+.fa-facebook {
+  background: #3B5998;
+  color: white;
+  padding: 10px;
+  font-size: 18px;
+  width: 15px;
+  text-align: center;
+  text-decoration: none;
+  margin: 10px 5px;
+  border-radius: 30%;
+}
+    
+.fa-instagram {
+  background: #C13584;
+  color: white;
+  padding: 10px;
+  font-size: 18px;
+  width: 15px;
+  text-align: center;
+  text-decoration: none;
+  margin: 10px 5px;
+  border-radius: 30%;
+}
+      
+.fa-linkedin {
+  background: #007bb5;
+  color: white;
+  padding: 10px;
+  font-size: 18px;
+  width: 15px;
+  text-align: center;
+  text-decoration: none;
+  margin: 10px 5px;
+  border-radius: 30%;
+}
+
+.socials {
+  text-align: right;
+  width: 200px;
+  margin-left: 2%;
+  margin-right: 1.4%;
+  position: relative;
+  float: right;  
+  z-index: ;
+}
+      
+.topnav {
+  font-family: 'Oxanium';
+  width: 1200px; 
+  position: relative;
+  display: inline-block;  
+  z-index: ;
+}
+
+.topnav a {
+  float: left;  
+  height: 5%;
+  color: #1E90FF;
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px;
+  display: inline-block;
+  padding: 15px 20px;
+  
+}
+
+.topnav a:hover {
+  background-color: #1E90FF;
+  padding: 20px 20px;
+  color: white;
+}
+
+.topnav a.active {
+  background-color: #1E90FF;
+  padding: 20px 20px;
+  color: white;
+}
+    
+.dropdown {  
+  float: left;
+  overflow: hidden;
+}
+
+.dropdown .dropbtn {  
+  border: none;
+  outline: none;  
+  color: #1E90FF;  
+  background-color: inherit;
+  font-family: 'Oxanium';
+  font-size: 20px;
+  padding: 15px 20px;
+  margin: 0;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #1E90FF;
+  color: white;
+  padding: 20px 20px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute; 
+  z-index: 1;
+}
+
+.dropdown-content a {
+  float: none;
+  color: #1E90FF;
+  padding: 15px 20px;  
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content a:hover {  
+  padding: 20px 15px;
+  background-color: inherit;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block; 
+}
+    
+.text {
+  text-align: left;  
+  position: relative;
+  float: left;  
+  margin-top: 11%;
+  margin-left: ; 
+  z-index: ;    
+}
+    
+.text h1{
+    font-family: 'Oxanium';
+    text-align: left;
+    color: white;
+    font-size: 30px;
+    letter-spacing: 5px;
+    width: 500px;
+    height: 60px;
+    margin: 0 auto;
+    margin-left: 2%;
+    margin-right: 1%;
+}   
+
+    
+.text h2{ 
+    font-family: 'Oxanium';
+    text-align: left;
+    text-justify: auto;
+    color: white;
+    font-size: 25px;
+    letter-spacing: 5px;
+    width: 1000px;
+    height: 60px;
+    margin: 0 auto;       
+    margin-left: 2%;
+    margin-right: 1%;
+}
+    
+.text p { 
+    font-family: sans-serif;
+    text-align: justify;    
+    color: white;
+    font-size: 18px;
+    letter-spacing: 1px;
+    width: 980px;    
+    margin: 0 auto;       
+    margin-left: 2%;
+    margin-right: 1%;
+}
+    
+  th, td {
+  border: solid 2px #005dbd;
+  border-spacing:3px;
+  font-family: inherit;
+  font-size: 14pt;
+  border-collapse: collapse;
+  width:200px;
+  padding: 10px;
+  vertical-align: center;
+  text-align: right;
+  color: white;
+  }
+  tr {
+  font-size: 14pt;
+  border-collapse: collapse;
+  width:200px;
+  padding: 10px;
+  vertical-align: center;
+  text-align: right;
+  } 
+    
+  .align1 { 
+     width: 250px; 
+     text-align: right;     
+     padding: 10px;
+     border: none;
+     background-color: none;
+    }
+
+  .align2 { 
+     width: 100px; 
+     text-align: left; 
+     padding: 10px;     
+     border: none;
+     background-color: none;
+    }
+    
+   .align3 { 
+     width: 600px; 
+     text-align: left; 
+     padding: 5px;     
+     border: none;
+     background-color: none;
+     text-align: justify;
+     font-size: 18px;
+     letter-spacing: 1px;
+    }
+    
+    .inbox {
+     color: white;
+     background-color: #1E90FF;
+     padding: 5px;
+     border: none;
+    }
+    
+    .inbox2 {
+     color: white;
+     background-color: #1E90FF;
+     margin-left: 2%;
+     padding: 10px;
+     border: none;
+    }
+    
+    .inbox2:hover {     
+     cursor: pointer;     
+     padding: 12px;
+     border: none;
+    }
+    
+#data {
+   text-align: left;
+   margin-top: ;   
+   font-size: 22px;
+   color: white;
+}
+    
+</style> 
+    
+<body>
+ 
+<div class="topnav">
+  <a class="active" href="menu.html">Home</a>
+  <div class="dropdown">
+    <button class="dropbtn" onClick=""> School of Economics
+     <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+     <a href="extessay.html">Extended Essay</a>
+     <a href="treasurer.html">Treasurer Template</a>
+     <a href="econworks.html">Other works</a>
+    </div>
+  </div>
+  <div class="dropdown">
+    <button class="dropbtn" onClick=""> School of Computing
+     <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">         
+     <a href="compworks.html">Other works</a>
+    </div>
+  </div>  
+  <a href="experiences.html"> Experiences </a>
+  <a href="mycv.html"> My CV </a>
+  <a href="contact.html"> Contact </a>
+</div>
+      
+<div class="socials">
+ <a href="https://www.facebook.com/federico.sacco.319" class="fa fa-facebook"></a>
+ <a href="https://www.instagram.com/kyros6372/" class="fa fa-instagram"></a> 
+ <a href="https://www.linkedin.com/in/federico-sacco-083789199/" class="fa fa-linkedin"></a>
+</div>    
+      
+<div class="text">  
+    
+<h1>Event Study</h1><br>        
+<h2>Random Data Generator</h2><br>
+<p>In the financial context, the Study of an Event is an analysis of the impact of a significant catalyst or a contingent event (which can be anything, from a tweet to a global pandemic) on the value of a firm. This generator of random data has the purpose of showing how a certain event can impact the returns of a firm and by which extent. It also shows how different type of formulas can predict different type of patterns which can be similar to the main formula (the CAPM, or Capital Asset Pricing Model) or quite different. Below you can personalise your set of data by increasing or decreasing the default values. Once you have selected your values, click on the display button to see the graph.</p><br>    
+<p><b>N.B.</b> you can only run <b>one</b> experiment, if you wish to start another one, with different data, you have to <b>refresh</b> the webpage.</p>
+        
+    <form id="data">
+   <table>
+    <caption><h3>Choose your set of data for an asset J</h3></caption><br>    
+    <tr>
+    <td class="align1">
+    <label for="rf">Risk-Free Rate:</label>        
+    </td>
+    <td class="align2">
+    <input class="inbox" type="number" id="rf" name="rf"step="0.01" min="0.01" max="0.05" value="0.01">
+    </td>
+    <td class="align3">
+    <label for="rf">This is the rate of return you would get if you make an investment with no risk of loss.</label>
+    </td>
+    </tr>
+    <tr>
+    <td class="align1">
+    <label for="mrp">Market Risk Premium:</label>
+    </td>
+    <td class="align2">
+    <input class="inbox" type="number" id="mrp" name="mrp" step="0.01" min="0.01" max="0.1" value="0.04">
+    </td>
+    <td class="align3">
+    <label for="rf">This is the difference between the risk-free rate and the expected return on the market portfolio. It tells how much more you get from investing in a risky asset rather than in a risk-free one.</label>
+    </td>
+    </tr>
+    <tr>
+    <td class="align1">   
+    <label for="sdm">Standard Deviation of the Market:</label>
+    </td>
+    <td class="align2">
+    <input class="inbox" type="number" id="sdm" name="sdm" step="0.01" min="0.01" max="0.20" value="0.06">
+    </td>
+    <td class="align3">
+    <label for="rf">This indicates the variations in the stock market over a certain period of time.</label>
+    </td>
+    </tr>
+    <tr>
+    <td class="align1">    
+    <label for="bj">Beta of J:</label>
+    </td>
+    <td class="align2">
+    <input class="inbox" type="number" id="bj" name="bj" step="0.01" min="0.01" max="1.30" value="0.05">
+    </td>
+    <td class="align3">
+    <label for="rf">This is a measure of risk and it indicates the volatility of the asset. The higher the beta, the higher the volatility, hence the risk and the expected returns would be higher. </label>
+    </td>
+    </tr>
+    <tr>
+    <td class="align1">   
+    <label for="sdj">Standard Deviation of J:</label>
+    </td>
+    <td class="align2">
+    <input class="inbox" type="number" id="sdj" name="sdj" step="0.01" min="0.05" max="0.20" value="0.16">
+    </td>
+    <td class="align3">
+    <label for="rf">This indicates the variations, relative to the mean, in the price of the asset J  over a certain period of time. The more unstable is the asset, the higher is the deviation.</label>
+    </td>
+    </tr>    
+   </table>
+    <input class="inbox2" type="button" value="Display" onClick="display()">
+    </form><br><br><br>
+    
+    <p>The Martingale Hypothesis takes a different approach, since it does not take into account the changes in the risk-free rate and market returns. It is an important indicator of market efficiency, because the more efficient the market is, the more random the variation of price will be. If you want to see how this compares to the main formula, click the button below:</p><br>    
+    <input class="inbox2" type="button" value="Martingale Hypothesis" onClick="martingale()"><br><br><br>
+    
+    <p>The Market Model states that the returns of a firm depends on the return on the market portfolio and the extent of the responsiveness of the firm's security measured by beta. It was developed as an adaptation of the CAPM to better fit historical returns data and can, therefore, be considered as an extension of the CAPM. Be noted that, in absence of historical data, since this is based on random generated data, the result may be very similar to the Martingale Hypothesis. If you want to see how this compares to the previous formulas, click the button below: </p><br>
+    <input class="inbox2" type="button" value="Market Model" onClick="marketmodel()"><br><br>
+    <div id="myDiv" style:width: 100%></div>
+    
+</div> 
+</body>
+</html>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        

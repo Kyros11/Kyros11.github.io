@@ -1,0 +1,214 @@
+<html>
+
+<head>
+    <title>My CV</title>
+    
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<link href='https://fonts.googleapis.com/css?family=Oxanium' rel='stylesheet'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script>
+</script>
+</head>
+
+<style>
+.container {
+  padding: 30px;
+ }
+
+body {  
+  font-family: 'Oxanium';
+  letter-spacing: 2px;
+  background: url(files/london%20city.jpg); 
+  background-size: cover;
+  height: 850px;
+  width: 98.8%;
+  position: relative;  
+}
+    
+.fa-facebook {
+  background: #3B5998;
+  color: white;
+  padding: 10px;
+  font-size: 18px;
+  width: 15px;
+  text-align: center;
+  text-decoration: none;
+  margin: 10px 5px;
+  border-radius: 30%;
+}
+    
+.fa-instagram {
+  background: #C13584;
+  color: white;
+  padding: 10px;
+  font-size: 18px;
+  width: 15px;
+  text-align: center;
+  text-decoration: none;
+  margin: 10px 5px;
+  border-radius: 30%;
+}
+      
+.fa-linkedin {
+  background: #007bb5;
+  color: white;
+  padding: 10px;
+  font-size: 18px;
+  width: 15px;
+  text-align: center;
+  text-decoration: none;
+  margin: 10px 5px;
+  border-radius: 30%;
+}
+
+.socials {
+  text-align: right;
+  width: 15%;
+  margin-left: 2%;
+  margin-right: 1.4%;
+  position: relative;
+  float: right;  
+  z-index: ;
+}
+      
+.topnav {
+  width: 1200px; 
+  position: relative;
+  display: inline-block;  
+  z-index: ;
+}
+
+.topnav a {
+  float: left;  
+  height: 25px;
+  color: #1E90FF;
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px;
+  display: inline-block;
+  padding: 15px 20px;
+  
+}
+
+.topnav a:hover {
+  background-color: #1E90FF;
+  padding: 20px 20px;
+  color: white;
+}
+
+.topnav a.active {
+  background-color: #1E90FF;
+  padding: 20px 20px;
+  color: white;
+}
+    
+.dropdown {  
+  float: left;
+  overflow: hidden;
+}
+
+.dropdown .dropbtn {  
+  border: none;
+  outline: none;  
+  color: #1E90FF;  
+  background-color: inherit;
+  font-family: inherit;
+  font-size: 20px;
+  padding: 15px 20px;
+  margin: 0;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #1E90FF;
+  color: white;
+  padding: 20px 20px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute; 
+  z-index: 1;
+}
+
+.dropdown-content a {
+  float: none;
+  color: #1E90FF;
+  padding: 15px 20px;  
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content a:hover {  
+  padding: 20px 15px;
+  background-color: inherit;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block; 
+}
+    
+.text {
+  text-align: center;  
+  position: relative;
+  float: center;  
+  margin-top: 120px;   
+  z-index: ;    
+}
+    
+.text h2{    
+    text-align: center;
+    color: white;
+    font-size: 30px;
+    letter-spacing: 5.5px;
+    width: 500px;
+    height: 60px;
+    margin: 0 auto;   
+}      
+      
+A {text-decoration: none;}
+</style>
+
+<body>
+    
+<div class="topnav">
+  <a class="active" href="menu.html">Home</a>
+  <div class="dropdown">
+    <button class="dropbtn" onClick=""> School of Economics
+     <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+     <a href="extessay.html">Extended Essay</a>
+     <a href="treasurer.html">Treasurer Template</a>
+     <a href="econworks.html">Other works</a>
+    </div>
+  </div>
+  <div class="dropdown">
+    <button class="dropbtn" onClick=""> School of Computing
+     <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+     <a href="EventStudy.html">Event Study</a>     
+     <a href="compworks.html">Other works</a>
+    </div>
+  </div>  
+  <a href="experiences.html"> Experiences </a>
+  <a href="contact.html"> Contact </a>
+</div>
+      
+<div class="socials">
+ <a href="https://www.facebook.com/federico.sacco.319" class="fa fa-facebook"></a>
+ <a href="https://www.instagram.com/kyros6372/" class="fa fa-instagram"></a> 
+ <a href="https://www.linkedin.com/in/federico-sacco-083789199/" class="fa fa-linkedin"></a>
+</div>    
+      
+<div class="text">
+  <h2>MY CV</h2>   
+</div><br>
+
+<div class="container">
+  <embed src="files/Federico%20Sacco%20CV.pdf" type="application/pdf" width="100%" height="600px" />
+</div>
+</body>
+</html>

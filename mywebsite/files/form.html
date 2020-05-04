@@ -1,0 +1,81 @@
+<html>
+<head>
+ <meta charset="UTF-8" />
+ <title>Form Generator</title>
+
+<style>
+
+#box div {
+  width: 25px;
+  height: 20px;
+  float: left;
+  padding: 10px;
+  margin: 5px;
+  padding-top: 5px;
+ }
+input,label {
+    margin: 5px;
+}
+
+</style>
+
+<script>
+
+var count= 0;
+
+function display(){
+    var text = document.createElement("p");
+    text.innerText= "The name is " + document.getElementById("form").elements["firstname"].value+", the date of birth is " + document.getElementById("form").elements["DoB"].value+" and the eye colour is " + document.getElementById("form").elements["eye"].value;
+    document.body.appendChild(text);
+
+    var deletion= document.createElement("Button");
+    deletion.innerHTML="Delete";
+    document.body.appendChild(deletion);
+    deletion.addEventListener("click", deletebutton);
+     count++;
+    var counter = document.getElementById("box")
+    counter.innerText= "lines: " + count;
+
+
+  function deletebutton(){
+     text.parentNode.removeChild(text);
+     deletion.parentNode.removeChild(deletion);
+     count--;
+     counter.innerText="lines:" + count;
+   }
+}
+
+ </script>
+</head>
+
+<body>
+
+  <h2>Form Generator</h2>
+
+<form id="form">
+  First name:<br>
+  <input type="text" name="firstname" value="">
+  <br><br>
+  Date of birth:<br>
+  <input type="date" name="DoB" value="" min="1940-01-01" max="2018-01-01">
+  <br><br>
+  Eye Colour:<br><br>
+  <select name="eye">
+  <option value="-">-</option>
+  <option value="Blue">Blue</option>
+  <option value="Brown">Brown</option>
+  <option value="Green">Green</option>
+  <option value="Grey">Grey</option>
+  <option value="Other">Other</option>
+</select>
+   <br><br>
+   <input type="button" value="Display" onClick="display()"/>
+   <input type="reset" value="Reset"/>
+   <br><br>
+</form>
+<div id="box"></div>
+
+<p></p>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<html>
+<head>
+ <meta charset="UTF-8" />
+ <title>Boxes Random Generator</title>
+
+<style>
+
+body {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 15pt;
+}
+
+#box1 div {
+  width: 45px;
+  height: 40px;
+  float: left;
+  padding: 20px;
+  margin: 5px;
+  padding-top: 15px;
+  background-color: red;
+  }
+
+
+</style>
+
+<script type="text/javascript">
+
+var numbers = 1;
+var margin = 2.5;
+
+function setup() {
+  var box1 = document.getElementById("box1");
+  for (var i = 0; i < numbers; i++) {
+    var box = document.createElement("div");
+    box.style.background = "#" + (Math.random()*0xFFFFFF<<0).toString(16);
+    margin = margin * 2;
+    var margin2 = margin + "px";
+    box.style.marginLeft = margin2;
+    box1.appendChild(box);
+  }
+}
+
+function setnumber() {
+  if (confirm("confirm?")) {
+    var box1 = document.getElementById("box1");
+    while (box1.children.length > 0) {
+      box1.removeChild(box1.firstElementChild);
+    }
+    numbers = document.getElementById("numbers").elements["number"].value;
+    setup();
+  }
+}
+
+</script>
+</head>
+
+<body onLoad="setup();">
+  <h2>Boxes Random Generator</h2>
+  <form id="numbers">
+  Box number: <input type="number" name="number" value="5"/>
+  <input type="button" onClick="setnumber();" value="Set number">
+  </form><br/>
+
+  <div id="box1"></div>
+
+
+</body>
+
+</html>

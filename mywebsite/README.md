@@ -1,0 +1,12 @@
+<!DOCTYPE html> 
+# mywebsite
+ 
+ 
+<html>  
+  
+<head>  
+    <title>Redirect</title>  
+    <meta http-equiv="refresh"
+        content="1; url = https://" />  
+</head>
+</html>

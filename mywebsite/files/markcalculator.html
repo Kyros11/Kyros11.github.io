@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Mark Calculator</title>    
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>        
+        <link type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
+<script>
+        function determineMark(selectAnswer, correctAnswer, confidence){
+            var marks
+          if (selectAnswer == correctAnswer) {
+            if (confidence === "low") {
+               var marks = 1; 
+            } else if (confidence === "medium") {
+               var marks = 2; 
+            } else if (confidence === "high") {
+               var marks = 3;
+            }
+          } else if (selectAnswer != correctAnswer) {
+             if (confidence === "low") {
+               var marks = 0;  
+           } else if (confidence === "medium") {
+               var marks = -2; 
+           } else if (confidence === "high") {
+               var marks = -6;  
+           }
+          }
+            return marks;               
+         }
+            
+        var arr = [0,0,0,0,0,0,0,0,0,0];         
+       
+           
+        $(document).ready(function generateTable() {            
+          $.getJSON("https://www.cs.kent.ac.uk/people/staff/sm951/co539/a2-2020/questions.json", function(data){
+              var studentdata = "";
+              var json=data.questions;              
+            $.each(json, function(index,value){             
+              studentdata += '<tr>';
+              studentdata += '<td>'+value.title+'</td>';
+              studentdata += '<td>';
+            for (i=0; i<value.answers.length;) {
+              studentdata += '<label><input type="radio" class="radio1" name="answer'+value.qId+'" value="'+value.answers[i].id+'">'+value.answers[i].id+'</label>'; i++;};    
+              studentdata += '<td><label><input type="text" class="text" name="answer'+value.qId+'" value=""></label></td>';
+              studentdata += '</td>';              
+              studentdata += '<td><div><label><input type="radio" class="radio2" value="low" name="confidence'+value.qId+'">Low</label><label><input type="radio" class="radio2" value="medium" name="confidence'+value.qId+'">Medium</label><label><input type="radio" class="radio2" value="high" name="confidence'+value.qId+'">High</label></div></td>';   
+              studentdata += '<td id="marks'+value.qId+'" class="marks" name="marks'+value.qId+'"></td>';
+              studentdata += '</tr>';
+              });                           
+              studentdata += '<tr>';
+              studentdata += '<td><td><td><td><td>Total: <div class="tot" name="tot"></div></td>';            
+              studentdata += '</tr>'; 
+              $('#studentab').append(studentdata);
+            $.each(json, function (index,value){  
+              $("input.radio1[name=answer"+value.qId+"]").change(function(){
+               $(".text[name=answer"+value.qId+"]").val($(this).val()+'');  
+               });         
+             
+              $("input.text[name=answer"+value.qId+"]").change(function(){
+               $(".radio1[name=answer"+value.qId+"][value="+$(this).val()+"]").prop('checked', true);  
+               });
+                
+                
+              $("input.radio2[name=confidence"+value.qId+"]").change(function(){
+               var selectAnswer = $("input.radio1[name=answer"+value.qId+"]:checked").val();  
+               var confidence = $("input.radio2[name=confidence"+value.qId+"]:checked").val();
+               var correctAnswer = value.correct;        
+               console.log(correctAnswer);
+               console.log(selectAnswer);         
+              $(".marks[name=marks"+value.qId+"]").html(determineMark(selectAnswer,correctAnswer,confidence));                
+               arr[value.qId-1]=determineMark(selectAnswer,correctAnswer,confidence);
+               var tot = 0;
+               for (i=0; i<arr.length; i++){
+                var tot = tot + arr[i];
+                }               
+                if (tot<0) {
+                 tot = 0;
+                 }
+                $(".tot[name=tot]").html(tot+'/30');          
+               });        
+             });              
+           });          
+           
+        $.getJSON("https://www.cs.kent.ac.uk/people/staff/sm951/co539/a2-2020/students.php", function(data){         
+         var students = [];      
+         for (var n of data.names) {
+        students.push({label:n.full, value:n.login});
+         }         
+        $(function() {
+         $("#log").autocomplete({
+          source: students
+         }); 
+       });       
+    });
+});           
+</script>
+    </head>
+<style>
+    h1{
+        font-family:sans-serif;
+        }
+        
+    #line1 {
+         margin: 10px;
+         height:15px;
+         display:inline-block;
+         }
+    #line2 {
+         height:15px;
+         display:inline-block;
+         }
+    #line3 {
+         height:15px;
+         display:inline-block;
+         }
+    #studentab {         
+         border-spacing:3px;         
+         font-size: 14pt;
+         border-collapse: collapse;
+         width:70%;
+         }
+   #studentab th, td {         
+         padding: 5px;
+         vertical-align: center;
+         }
+   #studentab th {
+         background: white;
+         }
+  
+        
+</style>
+    <body>
+        <div class="">
+            <div class="">
+        	<h1>Mark Calculator</h1>
+
+    <br><br>
+
+<table id="studentab" style="width:100%">
+    <caption><b><h2>Multiple Choice Questions (0-30 marks)</h2></b></caption>
+     <thead>
+      <tr>
+       <th id="">Question</th>
+       <th id="">Answer</th>
+       <th id=""><th>Confidence</th>
+       <th id="">Marks</th>         
+      </tr>    
+    </thead>    
+   </table>
+    <div class="">
+        <label>Student Login: <input id="log" placeholder="Enter ID"><input type="submit" id="submit" value="Save"></label>
+    </div>
+  </div>            
+ </div>
+<h3></h3>
+</body>
+</html>

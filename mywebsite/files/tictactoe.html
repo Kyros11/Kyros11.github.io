@@ -1,0 +1,325 @@
+<html>
+<head>
+ <meta charset="UTF-8" />
+ <title>Tic Tac Toe!</title>
+
+<style>
+
+body {
+  font-family:sans-serif;
+  background-image: url("https://images.cdn3.stockunlimited.net/preview1300/tic-tac-toe-pattern-background_1242337.jpg");
+  background-repeat: round;
+  background-size: auto;
+}
+
+header {
+  position:fixed;
+  left:0px;
+  top:0px;
+  width:100%;
+  height:60px;
+  padding:5px;
+  background-color:#00aaaa;
+  box-shadow:0px 5px 5px rgba(0,0,0,0.3);
+  z-index:6;
+}
+h1 {
+  font-weight:300;
+  font-size:60px;
+  font-family: sans-serif;
+  color:#ffbd69;
+  background-color: #111d5e;
+}
+
+table {
+   background-color:#00aaaa;
+   width:100%;
+}
+td {
+  width:33.3333%;
+  height:33.3333%;
+}
+input {
+  width:100%;
+  height:100%;
+  font-size:90px;
+  border:0px;
+  background-color:#111d5e;
+  color:#ffbd69;
+  transition-duration:0.3s;
+}
+input:hover {
+  background-color:#00aaaa;
+}
+button {
+  padding:5px;
+  background-color: #111d5e;
+  border:0px;
+  color:#ffbd69;
+  font-size:100%;
+}
+button:hover {
+  background-color:#00bbaa;
+}
+
+#box {
+  width: 15%;
+  height: 4%;
+  float: left;
+  padding: 1%;
+  margin: 1px;
+  padding-top: 1%;
+  color:#ffbd69;
+  background-color:#111d5e;
+}
+#popup {
+  z-index:5;
+  position:fixed;
+  left:25%;
+  top:40%;
+  width:50%;
+  padding:5px;
+  visibility:hidden;
+  background-color:#FFFFFF;
+  color:#555555;
+  box-shadow:5px 5px 5px rgba(0,0,0,0.3);
+}
+#popupbutton {
+  width:100%;
+  }
+#overlay {
+   position:fixed;
+   top:0px;
+   left:0px;
+   width:100%;
+   height:100%;
+   background-color:#000000;
+   opacity:0.5;
+   visibility:hidden;
+}
+
+</style>
+
+<script>
+
+var player = "O";
+
+function reset() {
+    var b1 = document.getElementById("1");
+    var b2 = document.getElementById("2");
+    var b3 = document.getElementById("3");
+    var b4 = document.getElementById("4");
+    var b5 = document.getElementById("5");
+    var b6 = document.getElementById("6");
+    var b7 = document.getElementById("7");
+    var b8 = document.getElementById("8");
+    var b9 = document.getElementById("9");
+
+    b1.value="";
+    b2.value="";
+    b3.value="";
+    b4.value="";
+    b5.value="";
+    b6.value="";
+    b7.value="";
+    b8.value="";
+    b9.value="";
+    b1.disabled=false;
+    b2.disabled=false;
+    b3.disabled=false;
+    b4.disabled=false;
+    b5.disabled=false;
+    b6.disabled=false;
+    b7.disabled=false;
+    b8.disabled=false;
+    b9.disabled=false;
+
+    document.getElementById("popup").style.visibility = "hidden";
+    document.getElementById("overlay").style.visibility = "hidden";
+}
+
+function buttondis() {
+    var b1 = document.getElementById("1");
+    var b2 = document.getElementById("2");
+    var b3 = document.getElementById("3");
+    var b4 = document.getElementById("4");
+    var b5 = document.getElementById("5");
+    var b6 = document.getElementById("6");
+    var b7 = document.getElementById("7");
+    var b8 = document.getElementById("8");
+    var b9 = document.getElementById("9");
+
+    b1.disabled = true;
+    b2.disabled = true;
+    b3.disabled = true;
+    b4.disabled = true;
+    b5.disabled = true;
+    b6.disabled = true;
+    b7.disabled = true;
+    b8.disabled = true;
+    b9.disabled = true;
+}
+
+function popup(winner) {
+      buttondis();
+
+      popuptext = document.getElementById("text");
+      popuptext.innerHTML = winner + " wins! ";
+
+      var pop = document.getElementById("popup");
+      var overlay = document.getElementById("overlay");
+      pop.style.visibility = "visible";
+      overlay.style.visibility ="visible";
+}
+
+function check() {
+
+    var b1 = document.getElementById("1").value;
+    var b2 = document.getElementById("2").value;
+    var b3 = document.getElementById("3").value;
+    var b4 = document.getElementById("4").value;
+    var b5 = document.getElementById("5").value;
+    var b6 = document.getElementById("6").value;
+    var b7 = document.getElementById("7").value;
+    var b8 = document.getElementById("8").value;
+    var b9 = document.getElementById("9").value;
+
+    if (((b1=="X") || (b1=="O")) && ((b1 == b2) && (b2 == b3))) {
+        popup(b1);
+    }
+      else if (((b1=="X") || (b1=="O")) && ((b1 == b4) && (b4 == b7))){
+        popup(b1);
+    }
+        else if (((b9=="X") || (b9=="O")) && ((b9 == b8) && (b8 == b7))){
+        popup(b9);
+    }
+        else if (((b9=="X") || (b9=="O")) && ((b9 == b6) && (b6 == b3))){
+      popup(b9);
+    }
+      else if (((b4=="X") || (b4=="O")) && ((b4 == b5) && (b5 == b6))){
+      popup(b4);
+    }
+        else if (((b2=="X") || (b2=="O")) && ((b2 == b5) && (b5 == b8))){
+      popup(b2);
+    }
+        else if (((b1=="X") || (b1=="O")) && ((b1 == b5) && (b5== b9))){
+      popup(b1);
+    }
+        else if (((b7=="X") || (b7=="O")) && ((b7 == b5) && (b5 == b3))){
+      popup(b7);
+    }
+
+  }
+
+function put(x, player) {
+     if (x==1) {
+     var button = document.getElementById("1");
+     button.value = player;
+     button.disabled=true;
+     }
+     else if (x==2) {
+     var button = document.getElementById("2");
+     button.value = player;
+     button.disabled=true;
+     }
+     else if (x==3) {
+     var button = document.getElementById("3");
+     button.value = player;
+     button.disabled=true;
+     }
+     else if (x==4) {
+     var button = document.getElementById("4");
+     button.value = player;
+     button.disabled=true;
+     }
+     else if (x==5) {
+     var button = document.getElementById("5");
+     button.value = player;
+     button.disabled=true;
+     }
+     else if (x==6) {
+     var button = document.getElementById("6");
+     button.value = player;
+     button.disabled=true;
+     }
+     else if (x==7) {
+     var button = document.getElementById("7");
+     button.value = player;
+     button.disabled=true;
+     }
+     else if (x==8) {
+     var button = document.getElementById("8");
+     button.value = player;
+     button.disabled=true;
+     }
+     else if (x==9) {
+     var button = document.getElementById("9");
+     button.value = player;
+     button.disabled=true;
+     }
+     check();
+     }
+
+var x=0;
+var o=0;
+function xoo(button) {
+  var indicate = document.getElementById("box")
+    if (player=="X") {
+    player="O";
+    put(button, player);
+    x = "X";
+    indicate.innerText= "Player turn: " + x;
+  }
+    else if (player=="O") {
+    player="X";
+    put(button, player);
+    o = "O";
+    indicate.innerText= "Player turn: " + o;
+    }
+}
+
+
+</script>
+</head>
+
+<body>
+
+  <h1>Tic Tac Toe!</h1>
+  <br /><br /><br />
+
+  <table>
+  <tr>
+  <td><input type="button" id="1" onclick="xoo(1)" value=""></td>
+  <td><input type="button" id="2" onclick="xoo(2)" value=""></td>
+  <td><input type="button" id="3" onclick="xoo(3)" value=""></td>
+  </tr>
+  <tr>
+  <td><input type="button" id="4" onclick="xoo(4)" value=""></td>
+  <td><input type="button" id="5" onclick="xoo(5)" value=""></td>
+  <td><input type="button" id="6" onclick="xoo(6)" value=""></td>
+  </tr>
+  <tr>
+  <td><input type="button" id="7" onclick="xoo(7)" value=""></td>
+  <td><input type="button" id="8" onclick="xoo(8)" value=""></td>
+  <td><input type="button" id="9" onclick="xoo(9)" value=""></td>
+  </tr>
+  </table>
+  <br /><br />
+
+  <div id="box"></div>
+  <br /><br /><br /><br />
+
+  <button onclick="reset()">Reset</button>
+
+
+
+<section align="center" id="popup">
+<p id="text">text</p>
+<button id="popupbutton" onclick="reset()">Play again</button>
+</section>
+
+<section id="overlay"></section>
+
+</body>
+
+</html>

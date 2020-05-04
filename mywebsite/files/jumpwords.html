@@ -1,0 +1,102 @@
+<html>
+<head>
+ <meta charset="UTF-8" />
+ <title>Jumping Words</title>
+ <h1><big>Jumping Words</big></h1>
+ <style type="text/css">
+
+   span {
+       position: relative;
+       top: 0;
+       font-family: Arial;
+       font-size: 16pt;
+     }
+
+     .The{
+       font-family: Arial;
+       font-size: 16pt;
+     }
+     .quick{
+       font-family: Arial;
+       font-size: 16pt;
+     }
+     .brown{
+       font-family: Arial;
+       font-size: 16pt;
+     }
+     .fox{
+       font-family: Arial;
+       font-size: 16pt;
+     }
+     .jumped{
+       font-family: Arial;
+       font-size: 16pt;
+     }
+     .over {
+       font-family: Arial;
+       font-size: 16pt;
+     }
+     .the {
+       font-family: Arial;
+       font-size: 16pt;
+     }
+     .lazy{
+       font-family: Arial;
+       font-size: 16pt;
+     }
+     .dog{
+       font-family: Arial;
+       font-size: 16pt;
+     }
+
+     #main {
+       text-align: center;
+       margin-top: calc(50vh - 3em);
+       cursor:pointer;
+     }
+
+
+</style>
+
+   <script>
+
+    var selected = 0;
+
+    function select(word) {
+
+      selected = word;
+
+      if (word.class!=true){
+        var right=word.nextElementSibling;
+      } else {
+        right=document.getElementById("main").firstElementChild;
+      }
+
+      right.style.color="#ef0a50";
+
+      var tmp=selected.innerHTML;
+      selected.innerHTML=right.innerHTML;
+      right.innerHTML=tmp;
+    }
+
+   </script>
+
+
+  </head>
+<body>
+  <div id="main">
+    <span class="The" onclick="select(this);">The</span>
+    <span class="quick" onclick="select(this);">quick</span>
+    <span class="brown" onclick="select(this);">brown</span>
+    <span class="fox" onclick="select(this);">fox</span>
+    <span class="jumped" onclick="select(this);">jumped</span>
+    <span class="over" onclick="select(this);">over</span>
+    <span class="the" onclick="select(this);">the</span>
+    <span class="lazy" onclick="select(this);">lazy</span>
+    <span class="dog" onclick="select(this);">dog</span>
+  </div>
+
+
+</body>
+
+</html>
